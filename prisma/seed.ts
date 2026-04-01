@@ -1,22 +1,15 @@
 import "dotenv/config";
-import { PrismaClient } from "@/src/generated/prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
 import { categories } from "./data/categories";
 import { products } from "./data/products";
-
-const prisma = new PrismaClient({
-  adapter: new PrismaPg({
-    connectionString: process.env.DATABASE_URL!,
-  }),
-});
+import { prismaClient } from "@/src/generated/prisma/utils/constanst";
 
 async function main() {
   try {
-    await prisma.category.createMany({
+    await prismaClient.category.createMany({
       data: categories,
     });
 
-    await prisma.product.createMany({
+    await prismaClient.product.createMany({
       data: products,
     });
     console.log("Data seeded successfully!");
@@ -27,10 +20,10 @@ async function main() {
 
 main()
   .then(async () => {
-    await prisma.$disconnect();
+    await prismaClient.$disconnect();
   })
   .catch(async (error) => {
     console.error("Error in main function:", error);
-    await prisma.$disconnect();
+    await prismaClient.$disconnect();
     process.exit(1);
   });
